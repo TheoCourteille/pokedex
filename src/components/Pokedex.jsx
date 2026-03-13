@@ -1,21 +1,29 @@
-import React from 'react'
 import Page from './Page'
 import { Button, Typography, Box, Grid, Divider } from '@mui/material'
-import { getCurrentUser } from '../services/users'
+import { getCurrentUser, getPokemonsFromUserId } from '../services/users'
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PokedexPokemonCard from './PokedexPokemonCard';
-import { getPokemonSpriteUrl } from '../services/APIPokmeon';
+import { getPokemonSpriteUrl, fetchPokemon } from '../services/APIPokmeon';
+import { useNavigate } from 'react-router-dom';
+
 
 function Pokedex() {
 
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const userData = getCurrentUser();
-        if (userData) {
-            setUser(userData);
+        const fetchUser = async () => {
+            const userData = await getCurrentUser();
+            console.log("Utilisateur actuel récupéré : ", userData);
+            if (userData) {
+                setUser(userData);
+            } else {
+                navigate('/Connexion');
+            }
         }
+        fetchUser();
     }, []);
     
     return (
@@ -32,7 +40,7 @@ function Pokedex() {
                     }}>Pokedex</Typography>
                 </Box>
                 <Box>
-                    {user && Object.keys(user['pokemon']).length === 0 ? (
+                    {user && Object.keys(user['pokemons']).length === 0 ? (
                         <Typography sx={{
                             marginBottom: 1
                         }}>Votre pokedex est vide</Typography>
@@ -40,7 +48,7 @@ function Pokedex() {
                         <Grid container spacing={{ xs: 5, md: 15 }} sx={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
-                            {user && user['pokemon'].map((pokemon, index) => (
+                            {user && Object.values(user['pokemons']).map((pokemon, index) => (
                                 <Grid item key={index}>
                                     <PokedexPokemonCard name={pokemon.name} image={getPokemonSpriteUrl(pokemon.id)} index={pokemon.id} />
                                 </Grid>

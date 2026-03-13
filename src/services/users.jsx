@@ -1,38 +1,126 @@
-export const getUsersInLocalStorage = () => {
-    const localStorageUsers = localStorage.getItem('users')
-    return localStorageUsers ? JSON.parse(localStorageUsers) : []
+import { createClient } from '@supabase/supabase-js';
+
+export const getUsers = async () => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    const { data, error } = await supabase.from('user').select('*');
+
+    if (error) {
+        console.error('Error fetching users:', error);
+        return [];
+    }
+
+    return data;
 }
 
-export const setUsersInLocalStorage = (users) => {
-    localStorage.setItem('users', JSON.stringify(users))
+export const insertUser = async (user) => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    const { data, error } = await supabase.from('user').insert(user[0]);
+
+    if (error) {
+        console.error('Error inserting user:', error);
+    }
+
+    return data;
+}
+
+export const getUserById = async (id) => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    const { data, error } = await supabase.from('user').select('*').eq('id', id);
+
+    if (error) {
+        console.error('Error fetching user by id:', error);
+        return null;
+    }
+
+    return data[0];
+}
+
+export const getUserByName = async (name) => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    const { data, error } = await supabase.from('user').select('*').eq('user_name', name);
+
+    if (error) {
+        console.error('Error fetching user by name:', error);
+        return null;
+    }
+
+    return data;
+}
+
+export const deleteUserById = async (id) => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+    console.log("Deleting user with id:", id);
+    const { data, error } = await supabase.from('user').delete().eq('id', id);
+
+    if (error) {
+        console.error('Error deleting user by id:', error);
+    }
+    console.log("User deleted:", data);
+}
+
+export const getPokemonsFromUserId = async (id) => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    const { data, error } = await supabase.from('user').select('pokemons').eq('id', id);
+
+    if (error) {
+        console.error('Error fetching pokemons from user id:', error);
+        return { pokemons: [] };
+    }
+
+    return data[0] || { pokemons: [] };
+}
+
+export const addPokemonToCurentUser = async (id, pokemon) => {
+    const user = await getCurrentUser();
+    if (user) {
+        const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+        
+        const updatedPokemons = [...(user.pokemons ? user.pokemons : []), { id, pokemon}];
+
+        const { error } = await supabase.from('user').update({ pokemons: updatedPokemons }).eq('id', user.id);
+
+        if (error) {
+            console.error('Error adding pokemon to current user:', error);
+            return;
+        }
+
+        const updatedUser = await getUserById(user.id);
+        setCurrentUserInLocalStorage(updatedUser);
+    }
+}
+
+export const deletePokemonFromCurrentUser = async (pokemonId) => {
+    const user = getCurrentUser();
+    if (user) {
+        const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+        const updatedPokemons = (user.pokemons ? user.pokemons : []).filter(p => p.id !== pokemonId);
+
+        const { error } = await supabase.from('user').update({ pokemons: updatedPokemons }).eq('id', user.id);
+
+        if (error) {
+            console.error('Error deleting pokemon from current user:', error);
+        }
+
+        const updatedUser = await getUserById(user.id);
+        setCurrentUserInLocalStorage(updatedUser);
+    }
+}
+
+export const setCurrentUserInLocalStorage = (user) => {
+    localStorage.setItem('currentUser', JSON.stringify(user));
 }
 
 export const getCurrentUser = () => {
-    const localStorageCurrentUser = localStorage.getItem('currentUser')
-    return localStorageCurrentUser ? JSON.parse(localStorageCurrentUser) : null
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user) : null;
 }
 
 export const removeCurrentUser = () => {
     localStorage.removeItem('currentUser')
-}
-
-export const setCurrentUserInLocalStorage = (user) => {
-    localStorage.setItem('currentUser', JSON.stringify(user))
-}
-
-export const addPokemonToCurrentUserInLocalStorage = (id, pokemon) => {
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-        currentUser.pokemon.push({ id, pokemon });
-        setCurrentUserInLocalStorage(currentUser);
-    }
-}
-
-export const deletePokemonFromCurrentUserInLocalStorage = (id) => {
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-        const updatedPokemons = currentUser.pokemon.filter(pokemon => pokemon.id !== id);
-        currentUser.pokemon = updatedPokemons;
-        setCurrentUserInLocalStorage(currentUser);
-    }
 }

@@ -1,21 +1,19 @@
-import React from 'react'
 import Page from './Page'
 import { Button, Box, FormGroup, FormControl } from '@mui/material'
-import { getCurrentUser } from '../services/users'
 import { useEffect, useState } from 'react';
 import PokemonCard from './PokemonCard';
 import { getPokemonSpriteUrl, fetchPokemon } from '../services/APIPokmeon';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { addPokemonToCurrentUserInLocalStorage, deletePokemonFromCurrentUserInLocalStorage, setUsersInLocalStorage, getUsersInLocalStorage } from '../services/users'
+import { addPokemonToCurentUser, getCurrentUser, deletePokemonFromCurrentUser } from '../services/users';
+import { useNavigate } from 'react-router-dom'
 
 function Pokemon() {
 
     const [user, setUser] = useState(null);
-
     const { id } = useParams();
-
     const [pokemon, setPokemon] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userData = getCurrentUser();
@@ -23,18 +21,9 @@ function Pokemon() {
             setUser(userData);
         }
     }, []);
-    
-    useEffect(() => {
-        if (user != null) {
-            console.log("Utilisateur actuel récupéré : ", user.id);
-            const updatedUsers = getUsersInLocalStorage().map(u => u.id === user.id ? user : u);
-            console.log(updatedUsers);
-            setUsersInLocalStorage(updatedUsers);
-        }
-    }, [user])
 
     useEffect(() => {
-        async function fetchData() {
+        const fetchData = async () => {
             const pokemonData = await fetchPokemon(id);
             if (pokemonData) {
                 setPokemon(pokemonData);
@@ -43,14 +32,14 @@ function Pokemon() {
         fetchData();
     }, []);
 
-    const handleAddPokemon = () => {
-        addPokemonToCurrentUserInLocalStorage(id, pokemon);
-        setUser(getCurrentUser());
+    const handleAddPokemon = async () => {
+        await addPokemonToCurentUser(id, pokemon);
+        navigate("/Pokedex");
     }
 
-    const handleDeletePokemon = () => {
-        deletePokemonFromCurrentUserInLocalStorage(id);
-        setUser(getCurrentUser());
+    const handleDeletePokemon = async () => {
+        await deletePokemonFromCurrentUser(id);
+        navigate("/Pokedex");
     }
 
     return (
@@ -63,13 +52,11 @@ function Pokemon() {
                 </Box>
                 <FormGroup>
                     <FormControl sx={{ marginBottom: 2 }}>
-                        <Link>
-                            {user && user.pokemon.some(userPokemon => userPokemon.id === id) ? (
-                                <Button onClick={() => { handleDeletePokemon() }} variant="contained" fullWidth>Supprimer du pokedex</Button>
-                            ) : (
-                                <Button onClick={() => { handleAddPokemon() }} variant="contained" fullWidth>Ajouter dans le pokedex</Button>
-                            )}
-                        </Link>
+                        {user && user.pokemons && user.pokemons.some(userPokemon => userPokemon.id === id) ? (
+                            <Button onClick={() => { handleDeletePokemon() }} variant="contained" fullWidth>Supprimer du pokedex</Button>
+                        ) : (
+                            <Button onClick={() => { handleAddPokemon() }} variant="contained" fullWidth>Ajouter dans le pokedex</Button>
+                        )}
                     </FormControl>
                     <FormControl>
                         <Link to="/Pokedex">

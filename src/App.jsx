@@ -12,7 +12,6 @@ import { getCurrentUser } from './services/users'
 function App() {
 
   const theme = createTheme(defaultTheme)
-
   return (
     <>
       <ThemeProvider theme={theme} >

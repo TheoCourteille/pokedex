@@ -3,7 +3,7 @@ import Page from './Page'
 import { Typography, Box, Grid, TextField } from '@mui/material'
 import { useEffect, useState } from 'react';
 import PokedexPokemonCard from './PokedexPokemonCard';
-import { fetchPokemonNames, getPokemonSpriteUrl } from '../services/APIPokmeon';
+import { getPokemonSpriteUrl, fetchPokemonNames } from '../services/APIPokmeon';
 
 function Pokemons() {
 

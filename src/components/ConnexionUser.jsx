@@ -1,19 +1,18 @@
-import React from 'react'
 import Page from './Page'
 import bin from '../assets/bin.svg'
 import { Button, Typography, Box, Avatar, Divider } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { getUsersInLocalStorage, setUsersInLocalStorage, setCurrentUserInLocalStorage } from '../services/users'
+import { deleteUserById, getUsers, setCurrentUserInLocalStorage } from '../services/users'
 import { Link } from 'react-router-dom'
 
 function ConnexionUser() {
 
     const [users, setUsers] = useState([])
 
-    const handleDeleteUser = (index) => {
-        const newUsers = users.filter((user, i) => i !== index)
-        setUsers(newUsers)
-        setUsersInLocalStorage(newUsers)
+    const handleDeleteUser = async (id) => {
+        await deleteUserById(id)
+        const users = await getUsers()
+        setUsers(users)
     }
 
     const handleConnectUser = (user) => {
@@ -21,16 +20,13 @@ function ConnexionUser() {
     }
 
     useEffect(() => {
-        if (users.length > 0) {
-            setUsersInLocalStorage(users)
+        const fetchUsers = async () => {
+            const users = await getUsers()
+            if (users) {
+                setUsers(users)
+            }
         }
-    }, [users])
-
-    useEffect(() => {
-        const users = getUsersInLocalStorage()
-        if (users) {
-            setUsers(users)
-        }
+        fetchUsers()
     }, [])
 
     return (
@@ -54,11 +50,11 @@ function ConnexionUser() {
                             <Avatar src={user['avatar']} sx={{ marginRight: 3 }} onClick={(e) => { handleConnectUser(user) }}></Avatar>
                         </Link>
                         <Link to="/Pokedex" style={{ textDecoration: 'none' }}>
-                            <Typography onClick={(e) => { handleConnectUser(user) }}>{user['name']}</Typography>
+                            <Typography onClick={(e) => { handleConnectUser(user) }}>{user['user_name']}</Typography>
                         </Link>
                         <Avatar src={bin} variant="contained" color="secondary" onClick={
                             () => {
-                                handleDeleteUser(index)
+                                handleDeleteUser(user.id)
                             }
                         } sx={{
                             marginLeft: 'auto',

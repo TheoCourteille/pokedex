@@ -1,9 +1,8 @@
-import React from 'react'
 import { Box, Container, Card, Typography, Avatar, Button } from '@mui/material'
 import logo from '../assets/logo.png'
-import { removeCurrentUser, getCurrentUser } from '../services/users'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { getCurrentUser, removeCurrentUser } from '../services/users'
 
 function Page({ children }) {
 
@@ -18,7 +17,9 @@ function Page({ children }) {
 
   const handleDisconnectUser = () => {
     removeCurrentUser()
+    setUser(null)
   }
+
 
   return (
     <Box>
@@ -38,7 +39,7 @@ function Page({ children }) {
                 <Avatar src={user['avatar']} sx={{ marginRight: 3 }}></Avatar>
               )}
               {user && (
-                <Typography sx={{ marginRight: 3 }}>Bonjour {user['name']}</Typography>
+                <Typography sx={{ marginRight: 3 }}>Bonjour {user['user_name']}</Typography>
               )}
               {user && (
                 <Link to="/connexion">
@@ -53,7 +54,6 @@ function Page({ children }) {
         </Container>
       </Box>
     </Box>
-
   )
 }
 

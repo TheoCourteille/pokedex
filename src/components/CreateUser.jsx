@@ -1,38 +1,30 @@
-import React from 'react'
 import Page from './Page'
 import image1 from '../assets/1.jpg'
 import image2 from '../assets/2.jpg'
 import image3 from '../assets/3.jpg'
 import { Button, Typography, Box, TextField, Avatar } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { getUsersInLocalStorage, setUsersInLocalStorage} from '../services/users'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { getUserByName, insertUser} from '../services/users'
+import { useNavigate } from 'react-router-dom'
 
 function CreateUser() {
 
-    const [users, setUsers] = useState([])
     const [newUserName, setNewUserName] = useState('')
     const [newUserImage, setNewUserImage] = useState(image1)
-    const [index, setIndex] = useState(0)
+    const navigate = useNavigate();
 
-    const handleAddUser = () => {
-        setIndex((prevIndex) => {
-            const newId = prevIndex + 1;
-            const updatedUsers = [...users, { id: newId, name: newUserName, avatar: newUserImage, pokemon: [] }];
-            setUsers(updatedUsers);
-            setUsersInLocalStorage(updatedUsers);
-            return newId;
-        });
-    };
-
-    useEffect(() => {
-        const usersFromStorage = getUsersInLocalStorage();
-        if (usersFromStorage && usersFromStorage.length > 0) {
-            setUsers(usersFromStorage);
-            const maxId = usersFromStorage.reduce((max, user) => Math.max(max, user.id), 0);
-            setIndex(maxId); 
+    const handleAddUser = async () => {
+        const existingUsers = await getUserByName(newUserName);
+        console.log(existingUsers);
+        if (existingUsers.length > 0) {
+            alert("Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre. \nThis username is already taken. Please choose another one.");
+            return;
+        } else {
+            await insertUser([{ user_name: newUserName, avatar: newUserImage, user_password: null, pokemons: [] }]);
+            console.log("user added");
+            navigate("/Connexion");
         }
-    }, []);
+    };
 
     return (
         <Page>
@@ -70,11 +62,9 @@ function CreateUser() {
                 />
             </Box>
             <Box sx={{ marginBottom: 1 }}>
-                <Link to="/Connexion">
-                    <Button variant="contained" fullWidth onClick={handleAddUser}>
-                        Créer un compte
-                    </Button>
-                </Link>
+                <Button variant="contained" fullWidth onClick={handleAddUser}>
+                    Créer un compte
+                </Button>
             </Box>
         </Page>
     )

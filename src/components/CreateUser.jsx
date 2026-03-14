@@ -10,17 +10,23 @@ import { useNavigate } from 'react-router-dom'
 function CreateUser() {
 
     const [newUserName, setNewUserName] = useState('')
+    const [newUserPassword, setNewUserPassword] = useState('')
     const [newUserImage, setNewUserImage] = useState(image1)
     const navigate = useNavigate();
 
     const handleAddUser = async () => {
+        if (!newUserPassword) {
+            alert('Veuillez saisir un mot de passe.');
+            return;
+        }
+
         const existingUsers = await getUserByName(newUserName);
         console.log(existingUsers);
         if (existingUsers.length > 0) {
             alert("Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre. \nThis username is already taken. Please choose another one.");
             return;
         } else {
-            await insertUser([{ user_name: newUserName, avatar: newUserImage, user_password: null, pokemons: [] }]);
+            await insertUser([{ user_name: newUserName, avatar: newUserImage, user_password: newUserPassword, pokemons: [] }]);
             console.log("user added");
             navigate("/Connexion");
         }
@@ -59,6 +65,14 @@ function CreateUser() {
                         setNewUserName(e.target.value)
                     }}
                     value={newUserName}
+                />
+            </Box>
+            <Box sx={{ marginBottom: 2 }}>
+                <TextField label="Mot de passe" type="password" fullWidth
+                    onChange={(e) => {
+                        setNewUserPassword(e.target.value)
+                    }}
+                    value={newUserPassword}
                 />
             </Box>
             <Box sx={{ marginBottom: 1 }}>

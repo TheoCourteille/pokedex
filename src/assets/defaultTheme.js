@@ -1,5 +1,5 @@
 export const defaultTheme = {
-  shadows: "none",
+  shadows: Array(25).fill('none'),
   shape: {
     borderRadius: 6,
   }, 

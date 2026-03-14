@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 export const getUsers = async () => {
     const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
-    const { data, error } = await supabase.from('user').select('*');
+    const { data, error } = await supabase.from('user').select('user_name, avatar, pokemons, id');
 
     if (error) {
         console.error('Error fetching users:', error);
@@ -28,7 +28,7 @@ export const insertUser = async (user) => {
 export const getUserById = async (id) => {
     const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
-    const { data, error } = await supabase.from('user').select('*').eq('id', id);
+    const { data, error } = await supabase.from('user').select('user_name, avatar, pokemons, id').eq('id', id);
 
     if (error) {
         console.error('Error fetching user by id:', error);
@@ -41,7 +41,7 @@ export const getUserById = async (id) => {
 export const getUserByName = async (name) => {
     const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
-    const { data, error } = await supabase.from('user').select('*').eq('user_name', name);
+    const { data, error } = await supabase.from('user').select('user_name, avatar, pokemons, id').eq('user_name', name);
 
     if (error) {
         console.error('Error fetching user by name:', error);
@@ -51,15 +51,37 @@ export const getUserByName = async (name) => {
     return data;
 }
 
-export const deleteUserById = async (id) => {
+export const deleteUserById = async (id, password) => {
     const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
-    console.log("Deleting user with id:", id);
-    const { data, error } = await supabase.from('user').delete().eq('id', id);
+
+    const rightPassword = await verifyUserPassword(id, password);
+
+    if (!rightPassword) {
+        console.error('Error during verification of user password for deletion: wrong password');
+        return false;
+    }
+
+    const { error: deleteError } = await supabase.from('user').delete().eq('id', id);
+
+    if (deleteError) {
+        console.error('Error deleting user by id:', deleteError);
+        return false;
+    }
+
+    return true;
+}
+
+export const verifyUserPassword = async (id, password) => {
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    const { data, error } = await supabase.from('user').select('user_password').eq('id', id).single();
 
     if (error) {
-        console.error('Error deleting user by id:', error);
+        console.error('Error fetching user password:', error);
+        return false;
     }
-    console.log("User deleted:", data);
+
+    return Boolean(data && data.user_password === password);
 }
 
 export const getPokemonsFromUserId = async (id) => {
@@ -115,7 +137,6 @@ export const deletePokemonFromCurrentUser = async (pokemonId) => {
 export const setCurrentUserInLocalStorage = (user) => {
     localStorage.setItem('currentUser', JSON.stringify(user));
 }
-
 export const getCurrentUser = () => {
     const user = localStorage.getItem('currentUser');
     return user ? JSON.parse(user) : null;

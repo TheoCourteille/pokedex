@@ -1,5 +1,5 @@
 import { Box, Container, Card, Typography, Avatar, Button } from '@mui/material'
-import logo from '../assets/logo.png'
+import logo from '../../../Documentation/assets/logo.png'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getCurrentUser, removeCurrentUser } from '../services/users'

@@ -1,5 +1,5 @@
 import Page from './Page'
-import bin from '../assets/bin.svg'
+import bin from '../../../Documentation/assets/bin.svg'
 import { Button, Typography, Box, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { deleteUserById, getUsers, setCurrentUserInLocalStorage, verifyUserPassword } from '../services/users'

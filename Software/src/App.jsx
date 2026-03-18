@@ -1,5 +1,5 @@
 import { ThemeProvider, createTheme } from '@mui/material'
-import { defaultTheme } from './assets/defaultTheme'
+import { defaultTheme } from '../../Documentation/assets/defaultTheme'
 import './App.css'
 import CreateUser from './components/CreateUser'
 import ConnexionUser from './components/ConnexionUser'

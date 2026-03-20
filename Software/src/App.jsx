@@ -17,7 +17,7 @@ function App() {
       <ThemeProvider theme={theme} >
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={(getCurrentUser) ? <CreateUser /> : <Pokedex /> } />
+            <Route path="/" element={(getCurrentUser) ? <Pokedex /> : <ConnexionUser /> } />
             <Route path="Create" element={<CreateUser />} />
             <Route path="Pokemons" element={<Pokemons />} />
             <Route path="Pokemon/:id" element={<Pokemon />} />

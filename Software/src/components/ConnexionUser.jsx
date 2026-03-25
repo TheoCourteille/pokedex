@@ -167,7 +167,7 @@ function ConnexionUser() {
             </Box>
             <Divider sx={{marginBottom:2, marginTop:2}}/>
             <Box sx={{ marginBottom: 2}}>
-                <Link to="/">
+                <Link to="/Create">
                     <Button variant="contained" fullWidth>
                         Créer un utilisateur
                     </Button>

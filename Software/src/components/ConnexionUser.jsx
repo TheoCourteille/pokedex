@@ -42,7 +42,7 @@ function ConnexionUser() {
         console.log(password);
         const success = await deleteUserById(userToDelete.id, password)
         if (!success) {
-            setDeleteError('Mot de passe incorrect ou erreur lors de la suppression.')
+            setDeleteError('Incorrect password or an error occurred during deletion.')
             return
         }
 
@@ -71,7 +71,7 @@ function ConnexionUser() {
 
         const ok = await verifyUserPassword(userToLogin.id, loginPassword)
         if (!ok) {
-            setLoginError('Mot de passe incorrect.');
+            setLoginError('Incorrect password !');
             return;
         }
 
@@ -91,23 +91,24 @@ function ConnexionUser() {
     }, [])
 
     return (
-        <Page>
+        <Page id="page-connexion-user">
             <Box sx={{
                 marginBottom: 2,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
             }}>
-                <Typography variant='h1'>Connexion au Pokedex</Typography>
+                <Typography variant='h1'>Connect to the pokedex</Typography>
             </Box>
 
             <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
-                <DialogTitle>Supprimer l'utilisateur</DialogTitle>
+                <DialogTitle>Delete the user</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Veuillez entrer le mot de passe de l'utilisateur <strong>{userToDelete?.user_name}</strong> pour confirmer la suppression.
+                        Please enter the user's password of <strong>{userToDelete?.user_name}</strong> to confirm the deletion.
                     </DialogContentText>
                     <TextField
+                        id="input-delete-password"
                         autoFocus
                         margin="dense"
                         label="Mot de passe"
@@ -120,18 +121,19 @@ function ConnexionUser() {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={closeDeleteDialog}>Annuler</Button>
-                    <Button onClick={handleConfirmDelete} color="error">Supprimer</Button>
+                    <Button id="btn-delete-cancel" onClick={closeDeleteDialog}>Cancel</Button>
+                    <Button id="btn-delete-confirm" onClick={handleConfirmDelete} color="error">Delete</Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog open={loginDialogOpen} onClose={closeLoginDialog}>
-                <DialogTitle>Connexion</DialogTitle>
+                <DialogTitle>Log in</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Entrez le mot de passe pour vous connecter en tant que <strong>{userToLogin?.user_name}</strong>.
+                        Enter your password to log in as <strong>{userToLogin?.user_name}</strong>.
                     </DialogContentText>
                     <TextField
+                        id="input-login-password"
                         autoFocus
                         margin="dense"
                         label="Mot de passe"
@@ -144,8 +146,8 @@ function ConnexionUser() {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={closeLoginDialog}>Annuler</Button>
-                    <Button onClick={handleConfirmLogin} variant="contained">Se connecter</Button>
+                    <Button id="btn-login-cancel" onClick={closeLoginDialog}>Cancel</Button>
+                    <Button id="btn-login-confirm" onClick={handleConfirmLogin} variant="contained">Log in</Button>
                 </DialogActions>
             </Dialog>
             <Box>
@@ -155,9 +157,9 @@ function ConnexionUser() {
                         display: 'flex',
                         alignItems: 'center'
                     }}>
-                        <Avatar src={user['avatar']} sx={{ marginRight: 3, cursor: 'pointer' }} onClick={() => openLoginDialog(user)} />
-                        <Typography sx={{ cursor: 'pointer' }} onClick={() => openLoginDialog(user)}>{user['user_name']}</Typography>
-                        <Avatar src={bin} variant="contained" color="secondary" onClick={() => openDeleteDialog(user)} sx={{
+                        <Avatar id={`avatar-user-${user.id}`} src={user['avatar']} sx={{ marginRight: 3, cursor: 'pointer' }} onClick={() => openLoginDialog(user)} />
+                        <Typography id={`text-user-${user.id}`} sx={{ cursor: 'pointer' }} onClick={() => openLoginDialog(user)}>{user['user_name']}</Typography>
+                        <Avatar id={`btn-delete-user-${user.id}`} src={bin} variant="contained" color="secondary" onClick={() => openDeleteDialog(user)} sx={{
                             marginLeft: 'auto',
                             display: 'flex',
                             cursor: 'pointer'
@@ -165,11 +167,11 @@ function ConnexionUser() {
                     </Box>
                 ))}
             </Box>
-            <Divider sx={{marginBottom:2, marginTop:2}}/>
-            <Box sx={{ marginBottom: 2}}>
+            <Divider sx={{ marginBottom: 2, marginTop: 2 }} />
+            <Box sx={{ marginBottom: 2 }}>
                 <Link to="/Create">
-                    <Button variant="contained" fullWidth>
-                        Créer un utilisateur
+                    <Button id="btn-create-user" variant="contained" fullWidth>
+                        Create user
                     </Button>
                 </Link>
             </Box>

@@ -43,24 +43,24 @@ function Pokemon() {
     }
 
     return (
-        <Page>
-            <Box>
+        <Page id="page-pokemon-detail">
+            <Box id="container-pokemon-detail">
                 <Box>
                     {user && pokemon && pokemon.name && (
-                        <PokemonCard name={pokemon.name} stats={pokemon.stats} types={pokemon.types} id={id} image={getPokemonSpriteUrl(id)} />
+                        <PokemonCard id={`card-pokemon-detail-${id}`} name={pokemon.name} stats={pokemon.stats} types={pokemon.types} pokemonId={id} image={getPokemonSpriteUrl(id)} />
                     )}
                 </Box>
                 <FormGroup>
                     <FormControl sx={{ marginBottom: 2 }}>
                         {user && user.pokemons && user.pokemons.some(userPokemon => userPokemon.id === id) ? (
-                            <Button onClick={() => { handleDeletePokemon() }} variant="contained" fullWidth>Supprimer du pokedex</Button>
+                            <Button id="btn-remove-pokemon" onClick={() => { handleDeletePokemon() }} variant="contained" fullWidth>Remove from the pokedex</Button>
                         ) : (
-                            <Button onClick={() => { handleAddPokemon() }} variant="contained" fullWidth>Ajouter dans le pokedex</Button>
+                            <Button id="btn-add-pokemon" onClick={() => { handleAddPokemon() }} variant="contained" fullWidth>Add to the pokedex</Button>
                         )}
                     </FormControl>
                     <FormControl>
-                        <Link to="/Pokedex">
-                            <Button variant="outlined" fullWidth>Retour au pokedex</Button>
+                        <Link id="link-back-pokedex" to="/Pokedex">
+                            <Button id="btn-back-pokedex" variant="outlined" fullWidth>Back to the pokedex</Button>
                         </Link>
                     </FormControl>
                 </FormGroup>

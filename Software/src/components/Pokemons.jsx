@@ -21,7 +21,7 @@ function Pokemons() {
     }, [pokemonsSearch]);
 
     return (
-        <Page>
+        <Page id="page-pokemons-search">
             <Box>
                 <Box sx={{
                     marginBottom: 1,
@@ -29,30 +29,30 @@ function Pokemons() {
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                    <Typography variant='h1' sx={{
+                    <Typography id="title-pokemons-search" variant='h1' sx={{
                         marginBottom: 1
-                    }}>Chercher un pokémon</Typography>
+                    }}>Search a pokemon</Typography>
                 </Box>
                 <Box sx={{ marginBottom: 2 }}>
-                    <TextField label="Recherche..." fullWidth
+                    <TextField id="input-pokemon-search" label="Search..." fullWidth
                         onChange={(e) => {
                             setPokemonsSearch(e.target.value)
                         }}
                         value={pokemonsSearch}
                     />
                 </Box>
-                <Typography>{pokemons.length} pokémons trouvés</Typography>
+                <Typography id="text-pokemon-count">{pokemons.length} pokemon found</Typography>
                 <Box>
-                    <Grid container spacing={{ xs: 5, md: 15 }} sx={{
+                    <Grid id="grid-pokemons-search" container spacing={{ xs: 5, md: 15 }} sx={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}>
-                        {pokemons.map((pokemon, index) => (
-                            <Grid item xs={5} key={index}>
-                                <PokedexPokemonCard name={pokemon.name} image={getPokemonSpriteUrl(pokemon.index)} index={pokemon.index} />
+                        {pokemons.map((pokemon) => (
+                            <Grid item xs={5} key={pokemon.id} id={`search-pokemon-item-${pokemon.id}`}>
+                                <PokedexPokemonCard id={`search-pokemon-${pokemon.id}`} name={pokemon.name} image={getPokemonSpriteUrl(pokemon.id)} pokemonId={pokemon.id} />
                             </Grid>
                         ))}
                         {pokemons.length % 2 !== 0 && (
-                            <Grid item xs={5}></Grid>
+                            <Grid item xs={5} id="grid-search-empty-placeholder"></Grid>
                         )}
                     </Grid>
                 </Box>

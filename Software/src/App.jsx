@@ -10,7 +10,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getCurrentUser } from './services/users'
 
 function App() {
-
   const theme = createTheme(defaultTheme)
   return (
     <>

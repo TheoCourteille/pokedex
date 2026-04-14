@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getCurrentUser, removeCurrentUser } from '../services/users'
 
-function Page({ children }) {
+function Page({ children, ...props }) {
 
   const [user, setUser] = useState(null);
 
@@ -22,12 +22,12 @@ function Page({ children }) {
 
 
   return (
-    <Box>
-      <Box sx={{ backgroundColor: "#F8F4F4", minHeight: '100vh' }}>
+    <Box {...props}>
+      <Box id="layout-root" sx={{ backgroundColor: "#F8F4F4", minHeight: '100vh' }}>
         <Container maxWidth="sm">
           <Box sx={{ paddingTop: 5, paddingBottom: 6 }}>
             <Box sx={{ marginBottom: 5, maxWidth: '300px', marginX: 'auto' }}>
-              <img src={logo} alt="logo pokemon" />
+              <img id="img-logo" src={logo} alt="logo pokemon" />
             </Box>
             <Box sx={{
               marginBottom: 2,
@@ -36,18 +36,18 @@ function Page({ children }) {
               justifyContent: 'center'
             }}>
               {user && (
-                <Avatar src={user['avatar']} sx={{ marginRight: 3 }}></Avatar>
+                <Avatar id="avatar-current-user" src={user['avatar']} sx={{ marginRight: 3 }}></Avatar>
               )}
               {user && (
-                <Typography sx={{ marginRight: 3 }}>Bonjour {user['user_name']}</Typography>
+                <Typography id="text-current-user" sx={{ marginRight: 3 }}>Hello {user['user_name']}</Typography>
               )}
               {user && (
                 <Link to="/connexion">
-                  <Button onClick={(e) => { handleDisconnectUser() }} variant='contained'>Se déconnecter</Button>
+                  <Button id="btn-logout" onClick={(e) => { handleDisconnectUser() }} variant='contained'>Log out</Button>
                 </Link>
               )}
             </Box>
-            <Card sx={{ padding: 2 }}>
+            <Card id="card-content" sx={{ padding: 2 }}>
               {children}
             </Card>
           </Box>

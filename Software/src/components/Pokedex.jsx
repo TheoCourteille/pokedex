@@ -16,7 +16,6 @@ function Pokedex() {
     useEffect(() => {
         const fetchUser = async () => {
             const userData = await getCurrentUser();
-            console.log("Utilisateur actuel récupéré : ", userData);
             if (userData) {
                 setUser(userData);
             } else {
@@ -25,41 +24,41 @@ function Pokedex() {
         }
         fetchUser();
     }, []);
-    
+
     return (
-        <Page>
-            <Box>
+        <Page id="page-pokedex">
+            <Box id="container-pokedex">
                 <Box sx={{
                     marginBottom: 1,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                    <Typography variant='h1' sx={{
+                    <Typography id="title-pokedex" variant='h1' sx={{
                         marginBottom: 1
                     }}>Pokedex</Typography>
                 </Box>
                 <Box>
                     {user && Object.keys(user['pokemons']).length === 0 ? (
-                        <Typography sx={{
+                        <Typography id="text-empty-pokedex" sx={{
                             marginBottom: 1
-                        }}>Votre pokedex est vide</Typography>
+                        }}>Your pokedex is empty</Typography>
                     ) : (
-                        <Grid container spacing={{ xs: 5, md: 15 }} sx={{
+                        <Grid id="grid-pokedex" container spacing={{ xs: 5, md: 15 }} sx={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
-                            {user && Object.values(user['pokemons']).map((pokemon, index) => (
-                                <Grid item key={index}>
-                                    <PokedexPokemonCard name={pokemon.name} image={getPokemonSpriteUrl(pokemon.id)} index={pokemon.id} />
+                            {user && Object.values(user['pokemons']).map((pokemon) => (
+                                <Grid item key={pokemon.id} id={`pokemon-item-${pokemon.id}`}>
+                                    <PokedexPokemonCard name={pokemon.name} image={getPokemonSpriteUrl(pokemon.id)} pokemonId={pokemon.id} />
                                 </Grid>
                             ))}
                         </Grid>
                     )}
                 </Box>
-                <Divider sx={{marginBottom:2, marginTop:2}}/>
+                <Divider sx={{ marginBottom: 2, marginTop: 2 }} />
                 <Box sx={{ marginBottom: 1 }}>
                     <Link to="/Pokemons">
-                        <Button variant="contained" fullWidth>Chercher un pokemon</Button>
+                        <Button id="btn-search-pokemon" variant="contained" fullWidth>Search a pokemon</Button>
                     </Link>
                 </Box>
             </Box>

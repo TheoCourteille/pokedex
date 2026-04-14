@@ -4,12 +4,18 @@ export async function fetchPokemonNames(search) {
   try {
     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=150');
     const pokemons = response.data.results;
-    const searchPokemons = pokemons.filter(pokemon => pokemon.name.includes(search));
-    const pokemonsWithIndex = pokemons.map((pokemon, index) => ({
-      name: pokemon.name,
-      index: index + 1
-    }));
-    return pokemonsWithIndex.filter(pokemon => searchPokemons.some(filtered => filtered.name === pokemon.name));
+    const filtered = pokemons.filter(pokemon => pokemon.name.includes(search));
+    const pokemonsWithId = filtered.map(pokemon => {
+      const id = pokemon.url.split('/').filter(Boolean).pop();
+
+      return {
+        name: pokemon.name,
+        id: Number(id)
+      };
+    });
+
+    return pokemonsWithId;
+
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
     return [];
